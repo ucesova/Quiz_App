@@ -121,7 +121,7 @@
           <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>Home</a>
           <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">inbox</i>Inbox</a>
           <a class="mdl-navigation__link" href="" onclick='trackLocation();return false;'><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">delete</i>Track your Location</a>
-          <a class="mdl-navigation__link" href="" onclick='getPOI();return false;'><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">report</i>Get POIs</a>
+          <a class="mdl-navigation__link" href="" onclick='getPOI();return false;'><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">report</i>Get Question's points</a>
           <a class="mdl-navigation__link" href="" onclick='callDivChange();return false;'><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i>Change Div Content</a>
           <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i>Flag</a>
           <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">local_offer</i>Promos</a>
@@ -141,7 +141,9 @@
 			<button id='getDistance' onclick='getDistance()'>Click Me to Calculate Distance</button>
 		  <div id="ajaxtest" style="width: 1600px; height: 20px;"></div>
 		  </div>
-          </div>
+        </div>
+		<div id="loopresults">The results will appear here</div>
+		<button id = "start loop" onclick = "processGeoJSON()">Click here to start</button>
         </div>
       </main>
     </div>

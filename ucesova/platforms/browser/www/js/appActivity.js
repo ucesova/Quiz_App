@@ -10,16 +10,17 @@ id: 'mapbox.streets'
 }).addTo(mymap);
 		
 // create a variable that will hold the XMLHttpRequest() - this must be done outside a function so that all the functions can use the same variable
-var client;
-// and a variable that will hold the layer itself – we need to do this outside the function so that we can use it to remove the layer later on
-var POIlayer;
+var client; 
+var questionsData;
 	
-// create the code to get the POIs data using an XMLHttpRequest
+// get the questions points from the database using an XMLHttpRequest
+
+var POIlayer; // variable that will hold the layer itself – we need to do this outside the function so that we can use it to remove the layer later on
+
 function getPOI() {
 	client = new XMLHttpRequest();
-
-client.open('GET','http://developer.cege.ucl.ac.uk:30293/getGeoJSON/participants/geocoded_address');
-	client.onreadystatechange = POIResponse; // note don't use POIResponse() withbrackets as that doesn't work
+	client.open('GET','http://developer.cege.ucl.ac.uk:30293/getGeoJSON/questions/geom');
+	client.onreadystatechange = POIResponse;  
 	client.send();
 }
 // create the code to wait for the response from the data server, and process the response once it is received
@@ -44,43 +45,73 @@ function loadPOIlayer(POIdata) {
 	mymap.fitBounds(POIlayer.getBounds());
 }
 
-		
-//Code to track the user locationremoving the previous markers, now based on https://gis.stackexchange.com/questions/182068/getting-current-user-location-automatically-every-x-seconds-to-put-on-leaflet
-		
-	
-/* // placeholders for the L.marker and L.circle representing user's current position and accuracy    
-var current_position;
 
-function onLocationFound(e) {
-	// if position defined, then remove the existing position marker from the map
-	if (current_position) {
-		mymap.removeLayer(current_position);
+/* 
+
+function getQuestions(){
+	client = new XMLHttpRequest();
+	client.open('GET','http://developer.cege.ucl.ac.uk:30293/getQuestions');
+	client.onreadystatechange = questionsResponse; 
+	client.send();
+} */
+
+/* function questionsResponse(){
+	if(client.readyState == 4){
+		var questionsData = client.responseText;
+		loadQuestionsLayer(questionsData);
 	}
-
-var radius = e.accuracy / 2;
-
-current_position = L.circle(e.latlng,radius).addTo(mymap)
-//.bindPopup("You are within " + radius + " meters from this point").openPopup();
-}
-	
-function onLocationError(e) {
-	alert(e.message);
 }
 
-mymap.on('locationfound', onLocationFound);
-mymap.on('locationerror', onLocationError);
+// convert the received data - which is text - to JSON format
+function loadQuestionsLayer(questionsData){
+	
+	// convert the text to JSON
+	var questionsJSON = JSON.parse(questionsData);	
+} */
 
-// wrap map.locate in a function    
-function locate() {
-	mymap.locate({setView: true, maxZoom: 16});
+//process the geoJSON (based on practical 6's appendix)
+
+	// get the questions with all its properties from the database
+// based on https://www.w3schools.com/js/tryit.asp?filename=tryjson_ajax
+/* var Questions = new XMLHttpRequest();
+getQuestions.onreadystatechange = function(){
+	if (this.readyState == 4 && this.status == 200) {
+		var myArr = JSON.parse(this.responseText);
+		document.getElementById("loopresults").innerHTML = myArr[1];
+	}
 }
+getQuestions.open('GET','http://developer.cege.ucl.ac.uk:30293/getQuestions', true);
+getQuestions.send();
+ */
 
-// call locate every 3 seconds... forever
-setInterval(locate, 3000);
-*/
+ 
+ 
+function processGeoJSON() {
 	
-// Second alternative
+	// convert the string of downloaded data to JSON
+	var geoJSONString = 
+	var geoJSON = JSON.parse(geoJSONString);
+	alert(geoJSON[0].type);
+	for(var i = 0; i < geoJSON[0].features.length; i++) {
+		var feature = geoJSON[0].features[i];
+		for ( component in feature){
+			if (component == "geometry") { // this is the geometry
+				for (geometry in feature[component]){attribute = "geometry " + feature[component][geometry];
+					document.getElementById("loopresults").innerHTML = document.getElementById("loopresults").innerHTML + " || " +attribute;
+				}
+			}
+			if (component == "properties") { // these are the attributes
+				for (property in feature[component]) {
+					attribute = "property " + feature[component][property];
+					document.getElementById("loopresults").innerHTML = document.getElementById("loopresults").innerHTML + " || " +attribute;
+				}
+			}
+		document.getElementById("loopresults").innerHTML = document.getElementById("loopresults").innerHTML + " <br> ";
+		}
+	}
+}
 	
+
 // code to track the user location
 var position_marker
 			
@@ -100,16 +131,8 @@ function showPosition(position) {
 	position_marker = L.circleMarker([position.coords.latitude, position.coords.longitude], {radius: 4}).addTo(mymap);
 	mymap.setView([position.coords.latitude, position.coords.longitude], 25);
 }
-		
-// get distance
-	
-/* (Now this code is inside trackLocation) 
-function getDistance(){
-	alert('getting distance')
-	// getDistanceFromPoint is the function called once the distance has been found
-	navigator.geolocation.getCurrentPosition(getDistanceFromPoint);	
-} */
 
+// get distance from a fixed point
 function getDistanceFromPoint(position){
 	//find the coordinates of a point to test using this website: https://itouchmap.com/latlong.html
 	// these are the coordinates of my building's garden
@@ -120,13 +143,24 @@ function getDistanceFromPoint(position){
 	document.getElementById('showDistance').innerHTML = "Distance: " + distance;
 	
 	var alertRadius = 0.06
-	/* // code to create a proximity alert 1er intento
+	// code to create a proximity alert 1er intento
 		if (distance < 0.06) {
 			position_marker.bindPopup("</b>la distancia es menor a 0.06<br/>and alternatives.");
 		} else {
 			position_marker.bindPopup("</b>la distancia es mayor a 0.06<br/>and alternatives.");
-		} */
+		}
 	
+	 
+// get distance between current position and the questions' points
+/* var questionPopUp
+
+function getDistanceFromPoint(position){
+	for (i in 
+	var distance = calculateDistance (position.coords.latitude, position.coords.longitude, feature.geometry.coordinates[0], feature.geometry.coordinates[1], 'K');
+	var alertRadius = 0.06
+	if (distance < alertRadius) {
+		questionPopUp = L.marker(feature.geometry.coordinates[0], feature.geometry.coordinates[1]
+	}  */
 // code to create a proximity alert 2do intento
 	if (distance < alertRadius) {
 		alert("you are close to a point of interest!!!!");
@@ -189,3 +223,5 @@ function calculateDistance(lat1, lon1, lat2, lon2, unit) {
 				document.getElementById('ajaxtest').innerHTML = xhr.responseText;
 		}
 	}
+	
+	
