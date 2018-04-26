@@ -11,7 +11,7 @@ id: 'mapbox.streets'
 		
 // create a variable that will hold the XMLHttpRequest() - this must be done outside a function so that all the functions can use the same variable
 var client; 
-var questionsData;
+
 	
 // get the questions points from the database using an XMLHttpRequest
 
@@ -46,16 +46,14 @@ function loadPOIlayer(POIdata) {
 }
 
 
-/* 
-
 function getQuestions(){
 	client = new XMLHttpRequest();
 	client.open('GET','http://developer.cege.ucl.ac.uk:30293/getQuestions');
 	client.onreadystatechange = questionsResponse; 
 	client.send();
-} */
+}
 
-/* function questionsResponse(){
+function questionsResponse(){
 	if(client.readyState == 4){
 		var questionsData = client.responseText;
 		loadQuestionsLayer(questionsData);
@@ -67,11 +65,10 @@ function loadQuestionsLayer(questionsData){
 	
 	// convert the text to JSON
 	var questionsJSON = JSON.parse(questionsData);	
-} */
+}
 
-//process the geoJSON (based on practical 6's appendix)
 
-	// get the questions with all its properties from the database
+// get the questions with all its properties from the database --> It doesn't work
 // based on https://www.w3schools.com/js/tryit.asp?filename=tryjson_ajax
 /* var Questions = new XMLHttpRequest();
 getQuestions.onreadystatechange = function(){
@@ -84,12 +81,12 @@ getQuestions.open('GET','http://developer.cege.ucl.ac.uk:30293/getQuestions', tr
 getQuestions.send();
  */
 
- 
- 
+//process the geoJSON (based on practical 6's appendix) 
+// --> But we need to do this without pasting the geoJSONString so if it changes in the data base it also changes here
+var geoJSONString= '[{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.13464,51.52427]},"properties":{"question":"Which is the architecture style of the Cruciform building?","choice1":"Victorian","choice2":"Tudor","choice3":"Queen Ann","choice4":"Eduardian","correct_choice":"choice 1"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.132126,51.522647]},"properties":{"question":"Which is the architecture style of the Waterstone bookstore building?","choice1":"Art Deco","choice2":"Revivalism","choice3":"Neo Gothic","choice4":"Eduardian","correct_choice":"choice 3"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.130991,51.523339]},"properties":{"question":"The Church of Christ the King, built in 1854?","choice1":"Neo Clasical","choice2":"Neo Gothic","choice3":"Beaux Arts","choice4":"Romanesque","correct_choice":"choice 2"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.05529,51.545476]},"properties":{"question":"The Empire Theatre, which was built on 1901?","choice1":"Tudor","choice2":"Neo Gothic","choice3":"Victorian Barroque","choice4":"Romanesque","correct_choice":"choice 3"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.055351,51.544755]},"properties":{"question":"Which is the architecture style of the Hackney Picturehouse?","choice1":"Romanesque","choice2":"Classical","choice3":"Bizantine","choice4":"Renaissance","correct_choice":"choice 2"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.05527,51.545173]},"properties":{"question":"The Kreative House building, built in 1910","choice1":"Queen Ann","choice2":"Art Deco","choice3":"Eclectic Eduardian","choice4":"Victorian","correct_choice":"choice 3"}}]}]';
 function processGeoJSON() {
 	
 	// convert the string of downloaded data to JSON
-	var geoJSONString = 
 	var geoJSON = JSON.parse(geoJSONString);
 	alert(geoJSON[0].type);
 	for(var i = 0; i < geoJSON[0].features.length; i++) {
@@ -132,6 +129,42 @@ function showPosition(position) {
 	mymap.setView([position.coords.latitude, position.coords.longitude], 25);
 }
 
+/* // get distance from a fixed point
+function getDistanceFromPoint(position){
+	//find the coordinates of a point to test using this website: https://itouchmap.com/latlong.html
+	// these are the coordinates of my building's garden
+	var lat = 51.557102 
+	var lng = -0.113329
+	// returns the distance in kilometers
+	var distance = calculateDistance(position.coords.latitude, position.coords.longitude, lat,lng, 'K');
+	document.getElementById('showDistance').innerHTML = "Distance: " + distance;
+	
+	var alertRadius = 0.06
+	/* // code to create a proximity alert, first attempt --> it doesn't work
+		if (distance < 0.06) {
+			position_marker.bindPopup("</b>the distance is less than 0.06<br/>and alternatives.");
+		} else {
+			position_marker.bindPopup("</b>the distance is higher than 0.06<br/>and alternatives.");
+		} */
+		
+	// code to create a proximity alert, 2nd attempt 
+	// --> it's working but we need an interactive popup that promts the correspondent question
+	//if (distance < alertRadius) {
+		//alert("you are close to a point of interest!!!!");
+		/* var popup = L.popup()
+		.setLatLng(51.557102 -0.113329)
+		.setContent('<p>menor!<br />posible respuesta 1.</p>')
+		.openOn(mymap);
+	} else { 
+		alert("You are not close yet to a point of interest!!!!");
+		/* L.popup()
+		.setLatLng(51.557102 -0.113329)
+		.setContent('<p>mayor!<br />posible respuesta 1.</p>')
+		.openOn(mymap);
+	}	
+}
+		 */
+		
 // get distance from a fixed list of points (returns the distance in kilometers) --> but actually we need to get it from the points in the database
 function getDistanceFromPoint(position){
 	var listCoords = [{lat:51.52445, lon:-0.13412},{lat:51.52422, lon: -0.13435},{lat:51.52479, lon:-0.13213},{lat:51.52379, lon:-0.13417}];
@@ -149,52 +182,11 @@ function getDistanceFromPoint(position){
 	// code to create a proximity alert
 	if (j!= null) {
 		alert("Alright lets play!");
-
 	} else if (j== null) { 
 		alert("But you are far from our game; press show points to see where to go!");
 	}	
 }
 
-
-
-
-/* // calculate the distance first version
-	var distance = calculateDistance(position.coords.latitude, position.coords.longitude, lat,lng, 'K');
-	document.getElementById('showDistance').innerHTML = "Distance: " + distance;
-	
-	var alertRadius = 0.06
-	// code to create a proximity alert, First version (anyway 
-		if (distance < 0.06) {
-			position_marker.bindPopup("</b>la distancia es menor a 0.06<br/>and alternatives.");
-		} else {
-			position_marker.bindPopup("</b>la distancia es mayor a 0.06<br/>and alternatives.");
-		}
-	 */
-// get distance between current position and the questions' points
-/* var questionPopUp
-
-function getDistanceFromPoint(position){
-	for (i in 
-	var distance = calculateDistance (position.coords.latitude, position.coords.longitude, feature.geometry.coordinates[0], feature.geometry.coordinates[1], 'K');
-	var alertRadius = 0.06
-	if (distance < alertRadius) {
-		questionPopUp = L.marker(feature.geometry.coordinates[0], feature.geometry.coordinates[1]
-	}  */
-/* /* // code to create a proximity alert 2do intento
-	if (distance < alertRadius) {
-		alert("you are close to a point of interest!!!!"); // but we need an interactive pop up
-		/* var popup = L.popup()
-		.setLatLng(51.557102 -0.113329)
-		.setContent('<p>menor!<br />posible respuesta 1.</p>')
-		.openOn(mymap);
-	} else { 
-		alert("You are not close yet to a point of interest!!!!");
-		/* L.popup()
-		.setLatLng(51.557102 -0.113329)
-		.setContent('<p>mayor!<br />posible respuesta 1.</p>')
-		.openOn(mymap);
-	}	
-} */
 // code adapted from https://www.htmlgoodies.com/beyond/javascript/calculate-the-distance-between-two-points-inyour-web-apps.html
 function calculateDistance(lat1, lon1, lat2, lon2, unit) {
 	var radlat1 = Math.PI * lat1/180;
@@ -212,10 +204,6 @@ function calculateDistance(lat1, lon1, lat2, lon2, unit) {
 	if (unit=="N") { dist = dist * 0.8684 ;}    // convert miles to nautical miles
 	return dist;
 }
-
-
-	
-
 	
 	//////////////
 	
@@ -243,4 +231,5 @@ function calculateDistance(lat1, lon1, lat2, lon2, unit) {
 		}
 	}
 	
-	
+// NOTE: For testing try http://developer.cege.ucl.ac.uk:31293/
+// It's also neccesary to run httpServer.js, server.js and phonegap serve
