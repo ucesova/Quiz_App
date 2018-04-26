@@ -132,25 +132,44 @@ function showPosition(position) {
 	mymap.setView([position.coords.latitude, position.coords.longitude], 25);
 }
 
-// get distance from a fixed point
+// get distance from a fixed list of points (returns the distance in kilometers) --> but actually we need to get it from the points in the database
 function getDistanceFromPoint(position){
-	//find the coordinates of a point to test using this website: https://itouchmap.com/latlong.html
-	// these are the coordinates of my building's garden
-	var lat = 51.557102 
-	var lng = -0.113329
-	// returns the distance in kilometers
+	var listCoords = [{lat:51.52445, lon:-0.13412},{lat:51.52422, lon: -0.13435},{lat:51.52479, lon:-0.13213},{lat:51.52379, lon:-0.13417}];
+	var alertRadius = 0.4;
+    var minDistance = null;
+	var j = null;
+	for(var i = 0; i < listCoords.length; i++) {
+		var distance = calculateDistance(position.coords.latitude, position.coords.longitude, listCoords[i].lat,listCoords[i].lon, 'K');
+		document.getElementById('showDistance').innerHTML = "Distance: " + distance;
+		if (distance<= alertRadius&&(minDistance==null||distance<minDistance)){
+			minDistance=distance;
+			j=i;
+		}
+	}
+	// code to create a proximity alert
+	if (j!= null) {
+		alert("Alright lets play!");
+
+	} else if (j== null) { 
+		alert("But you are far from our game; press show points to see where to go!");
+	}	
+}
+
+
+
+
+/* // calculate the distance first version
 	var distance = calculateDistance(position.coords.latitude, position.coords.longitude, lat,lng, 'K');
 	document.getElementById('showDistance').innerHTML = "Distance: " + distance;
 	
 	var alertRadius = 0.06
-	// code to create a proximity alert 1er intento
+	// code to create a proximity alert, First version (anyway 
 		if (distance < 0.06) {
 			position_marker.bindPopup("</b>la distancia es menor a 0.06<br/>and alternatives.");
 		} else {
 			position_marker.bindPopup("</b>la distancia es mayor a 0.06<br/>and alternatives.");
 		}
-	
-	 
+	 */
 // get distance between current position and the questions' points
 /* var questionPopUp
 
@@ -161,21 +180,21 @@ function getDistanceFromPoint(position){
 	if (distance < alertRadius) {
 		questionPopUp = L.marker(feature.geometry.coordinates[0], feature.geometry.coordinates[1]
 	}  */
-// code to create a proximity alert 2do intento
+/* /* // code to create a proximity alert 2do intento
 	if (distance < alertRadius) {
-		alert("you are close to a point of interest!!!!");
+		alert("you are close to a point of interest!!!!"); // but we need an interactive pop up
 		/* var popup = L.popup()
 		.setLatLng(51.557102 -0.113329)
 		.setContent('<p>menor!<br />posible respuesta 1.</p>')
-		.openOn(mymap); */
+		.openOn(mymap);
 	} else { 
 		alert("You are not close yet to a point of interest!!!!");
 		/* L.popup()
 		.setLatLng(51.557102 -0.113329)
 		.setContent('<p>mayor!<br />posible respuesta 1.</p>')
-		.openOn(mymap); */
+		.openOn(mymap);
 	}	
-}
+} */
 // code adapted from https://www.htmlgoodies.com/beyond/javascript/calculate-the-distance-between-two-points-inyour-web-apps.html
 function calculateDistance(lat1, lon1, lat2, lon2, unit) {
 	var radlat1 = Math.PI * lat1/180;
