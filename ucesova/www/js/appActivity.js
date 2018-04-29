@@ -165,7 +165,7 @@ alert("You are not close yet to a point of interest!!!!");
 }
  */
 
-// get distance from a the question points in the database (returns the distance in kilometers)
+// get distance from the question points in the database (returns the distance in kilometers)
 function getDistanceFromPoint(position) {
 	// Fetch data here
 	//console.log(getQuestions());
@@ -198,7 +198,7 @@ function getDistanceFromPoint(position) {
 			// Move the other part here
 			// var listCoords = [{ lat: 51.52445, lon: -0.13412 }, { lat: 51.52422, lon: -0.13435 }, { lat: 51.52479, lon: -0.13213 }, { lat: 51.52379, lon: -0.13417 }];
 			// var listCoords = listCoordinates;
-			var alertRadius = 10;
+			var alertRadius = 0.4;
 			var minDistance = null;
 			var j = null;
 			console.log("User location: ", {lat: position.coords.latitude, lng: position.coords.longitude });
@@ -214,14 +214,10 @@ function getDistanceFromPoint(position) {
 			// code to create a proximity alert print the question and choises asociated to the point where the user is near to
 			if (j != null) {
 				alert("You are near to an interesting building! go to the bottom to answer which is its architecture style");
-				document.getElementById("nearQuestion").innerHTML = listQuestions[i];
-				
+				//document.getElementById("nearQuestion").innerHTML = listQuestions[i];
 			} else if (j == null) {
 				alert("You are not close yet to a buildings in this game; press show buildings to see where to go!");
-			}
-			
- 
-			
+			}	
 		})
 		.catch(function (error) {
 			console.log(error.message);
