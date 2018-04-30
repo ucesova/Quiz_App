@@ -197,15 +197,15 @@ function getDistanceFromPoint(position) {
 				}
 			});
 
-			var listQuestions = responseJSON[0]["features"].map(function(feature) {
+			/* var listQuestions = responseJSON[0]["features"].map(function(feature) {
 				var featureQuestion = feature["properties"]["question"];
 				return {
 					questionpoint: featureQuestion,
 				}
-			});
+			}); */
 
-			console.log(listCoordinates);
-			console.log(listQuestions[3]); // the index refers to the property index
+			//console.log(listCoordinates);
+			//console.log(listQuestions[3]); // the index refers to the property index
 			// Move the other part here
 			// var listCoords = [{ lat: 51.52445, lon: -0.13412 }, { lat: 51.52422, lon: -0.13435 }, { lat: 51.52479, lon: -0.13213 }, { lat: 51.52379, lon: -0.13417 }];
 			// var listCoords = listCoordinates;
