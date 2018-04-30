@@ -53,16 +53,6 @@ function getQuestions(){
 	client.send();
 }
 
-function getQuestionsV2(method, url) {
-	return new Promise(function (resolve, reject) {
-		var xhr = new XMLHttpRequest();
-		xhr.open(method, url);
-		xhr.onload = resolve;
-		xhr.onerror = reject;
-		xhr.send();
-	});
-}
-
 function questionsResponse(){
 	if(client.readyState == 4){
 		var questionsData = client.responseText;
@@ -103,8 +93,7 @@ function processGeoJSON() {
 		var feature = geoJSON[0].features[i];
 		for ( component in feature){
 			if (component == "geometry") { // this is the geometry
-				for (geometry in feature[component]){
-					attribute = "geometry " + feature[component][geometry];
+				for (geometry in feature[component]){attribute = "geometry " + feature[component][geometry];
 					document.getElementById("loopresults").innerHTML = document.getElementById("loopresults").innerHTML + " || " +attribute;
 				}
 			}
@@ -178,51 +167,24 @@ function getDistanceFromPoint(position){
 		
 // get distance from a fixed list of points (returns the distance in kilometers) --> but actually we need to get it from the points in the database
 function getDistanceFromPoint(position){
-	// Fetch data here
-	//console.log(getQuestions());
-
-	getQuestionsV2('GET', 'http://developer.cege.ucl.ac.uk:30293/getQuestions')
-		.then(function (data) {
-			var responseJSON = JSON.parse(data.target.response);
-			// Get the geometries
-			// Get the questions
-			// console.log(JSON.stringify(responseJSON));
-			var listCoordinates = responseJSON[0]["features"].map(function(feature) {
-				var featureCoordinate = feature["geometry"]["coordinates"];
-				var featureLat = featureCoordinate[1];
-				var featureLng = featureCoordinate[0]
-				return {
-					lat: featureLat,
-					lon: featureLng
-				}
-			});
-			
-			//var listCoords = [{lat:51.52445, lon:-0.13412},{lat:51.52422, lon: -0.13435},{lat:51.52479, lon:-0.13213},{lat:51.52379, lon:-0.13417}];
-			
-			
-			var alertRadius = 0.4;
-			var minDistance = null;
-			var j = null;
-			console.log("User location: ", {lat: position.coords.latitude, lng: position.coords.longitude });
-			
-			for (var i = 0; i < listCoordinates.length; i++) {
-				var distance = calculateDistance(position.coords.latitude, position.coords.longitude, listCoordinates[i].lat, listCoordinates[i].lon, 'K');
-				document.getElementById('showDistance').innerHTML = "Distance: " + distance;
-				if (distance <= alertRadius && (minDistance == null || distance < minDistance)) {
-					minDistance = distance;
-					j = i;
-				}
-			}
-			// code to create a proximity alert
-			if (j != null) {
-				alert("Alright lets play!");
-			} else if (j == null) { 
-				alert("But you are far from our game; press show points to see where to go!");
-			}	
-		})
-		.catch(function (error) {
-			console.log(error.message);
-		});
+	var listCoords = [{lat:51.52445, lon:-0.13412},{lat:51.52422, lon: -0.13435},{lat:51.52479, lon:-0.13213},{lat:51.52379, lon:-0.13417}];
+	var alertRadius = 0.4;
+    var minDistance = null;
+	var j = null;
+	for(var i = 0; i < listCoords.length; i++) {
+		var distance = calculateDistance(position.coords.latitude, position.coords.longitude, listCoords[i].lat,listCoords[i].lon, 'K');
+		document.getElementById('showDistance').innerHTML = "Distance: " + distance;
+		if (distance<= alertRadius&&(minDistance==null||distance<minDistance)){
+			minDistance=distance;
+			j=i;
+		}
+	}
+	// code to create a proximity alert
+	if (j!= null) {
+		alert("Alright lets play!");
+	} else if (j== null) { 
+		alert("But you are far from our game; press show points to see where to go!");
+	}	
 }
 
 // code adapted from https://www.htmlgoodies.com/beyond/javascript/calculate-the-distance-between-two-points-inyour-web-apps.html
@@ -245,29 +207,29 @@ function calculateDistance(lat1, lon1, lat2, lon2, unit) {
 	
 	//////////////
 	
-var xhr; // define the global variable to process the AJAX request
-function callDivChange() {
-	xhr = new XMLHttpRequest();
-	var filename = document.getElementById("filename").value;
-	xhr.open("GET", filename, true);
-	xhr.onreadystatechange = processDivChange;
-	try {
-		xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	var xhr; // define the global variable to process the AJAX request
+	function callDivChange() {
+		xhr = new XMLHttpRequest();
+		var filename = document.getElementById("filename").value;
+		xhr.open("GET", filename, true);
+		xhr.onreadystatechange = processDivChange;
+		try {
+			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		}
+		catch (e) {
+			// this only works in internet explorer
+		}
+		xhr.send();
 	}
-	catch (e) {
-		// this only works in internet explorer
-	}
-	xhr.send();
-}
 
-function processDivChange() {
-	if (xhr.readyState < 4) // while waiting response from server
-		document.getElementById('ajaxtest').innerHTML = "Loading...";
-	else if (xhr.readyState === 4) { // 4 = Response from server has been completely loaded.
-		if (xhr.status == 200 && xhr.status < 300)// http status between 200 to 299 are all successful
-			document.getElementById('ajaxtest').innerHTML = xhr.responseText;
+	function processDivChange() {
+		if (xhr.readyState < 4) // while waiting response from server
+			document.getElementById('ajaxtest').innerHTML = "Loading...";
+		else if (xhr.readyState === 4) { // 4 = Response from server has been completely loaded.
+			if (xhr.status == 200 && xhr.status < 300)// http status between 200 to 299 are all successful
+				document.getElementById('ajaxtest').innerHTML = xhr.responseText;
+		}
 	}
-}
 	
 // NOTE: For testing try http://developer.cege.ucl.ac.uk:31293/
 // It's also neccesary to run httpServer.js, server.js and phonegap serve
