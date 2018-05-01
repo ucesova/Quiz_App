@@ -45,6 +45,7 @@ function loadPOIlayer(POIdata) {
 	mymap.fitBounds(POIlayer.getBounds());
 }
 
+// get the questions from the database using an XMLHttpRequest (not only the geometry)
 
 function getQuestions(){
 	client = new XMLHttpRequest();
@@ -52,7 +53,7 @@ function getQuestions(){
 	client.onreadystatechange = questionsResponse; 
 	client.send();
 }
-
+// create the code to wait for the response from the data server, and process the response once it is received
 function questionsResponse(){
 	if(client.readyState == 4){
 		var questionsData = client.responseText;
@@ -181,10 +182,13 @@ function getDistanceFromPoint(position){
 	}
 	// code to create a proximity alert
 	if (j!= null) {
-		alert("Alright lets play!");
+		alert("You are close to and interesting building! See below a question about it");
+		// Here should be the code to print the corresponding question in the html
 	} else if (j== null) { 
-		alert("But you are far from our game; press show points to see where to go!");
+		alert("you are not yet close enough to an interesting building. Click on show points to see where to go!");
 	}	
+
+	
 }
 
 // code adapted from https://www.htmlgoodies.com/beyond/javascript/calculate-the-distance-between-two-points-inyour-web-apps.html
@@ -232,4 +236,4 @@ function calculateDistance(lat1, lon1, lat2, lon2, unit) {
 	}
 	
 // NOTE: For testing try http://developer.cege.ucl.ac.uk:31293/
-// It's also neccesary to run httpServer.js, server.js and phonegap serve
+// It's also neccesary to run httpServer.js, server.js and phonegap serve (if not deployed as a stand-alone app)
