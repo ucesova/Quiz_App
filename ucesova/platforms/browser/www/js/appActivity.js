@@ -19,18 +19,47 @@ var POIlayer; // variable that will hold the layer itself – we need to do this
 
 function getPOI() {
 	client = new XMLHttpRequest();
-	client.open('GET','http://developer.cege.ucl.ac.uk:30293/getGeoJSON/questions/geom');
+	client.open('GET','https://developer.cege.ucl.ac.uk:31093/getGeoJSON/questions/geom');
 	client.onreadystatechange = POIResponse;  
 	client.send();
 }
 // create the code to wait for the response from the data server, and process the response once it is received
+var geoJSONString; // this s needed as a global variable
+var listCoordinates;
 function POIResponse() {
 // this function listens out for the server to say that the data is ready - i.e. has state 4
 	if (client.readyState == 4) {
 		// once the data is ready, process the data
 		var POIdata = client.responseText;
-		loadPOIlayer(POIdata);
+		geoJSONString = client.responseText;
+		loadPOIlayer(POIdata); // this code make POIdata available to be used by loadPOIlayer function
 	}
+// Get the geometries
+		// console.log(JSON.stringify(responseJSON));
+		var responseJSON = JSON.parse(POIdata);
+		listCoordinates = responseJSON[0]["features"].map(function(feature) {
+			var featureCoordinate = feature["geometry"]["coordinates"];
+			var featureLat = featureCoordinate[1];
+			var featureLng = featureCoordinate[0]
+			return {
+				lat: featureLat,
+				lon: featureLng
+			}
+			//getDistanceFromPoint(listCoordinates); //this code make POIdata available to be used by loadPOIlayer function
+		});
+		
+
+			// Get the properties (questions, choices or correct choice)
+			var listQuestions = responseJSON[0]["features"].map(function(feature) {
+				var featureQuestion = feature["properties"]["question"];
+				return {
+					questionpoint: featureQuestion,
+				}
+			});	
+			
+			console.log(listCoordinates);
+			console.log(listCoordinates.length);
+			console.log(listQuestions[3]);
 }		
 // convert the received data - which is text - to JSON format and add it to the map
 function loadPOIlayer(POIdata) {
@@ -46,8 +75,8 @@ function loadPOIlayer(POIdata) {
 }
 
 // get the questions from the database using an XMLHttpRequest (not only the geometry)
-
-function getQuestions(){
+// we dont need this one
+/* function getQuestions(){
 	client = new XMLHttpRequest();
 	client.open('GET','http://developer.cege.ucl.ac.uk:30293/getQuestions');
 	client.onreadystatechange = questionsResponse; 
@@ -67,7 +96,7 @@ function loadQuestionsLayer(questionsData){
 	// convert the text to JSON
 	var questionsJSON = JSON.parse(questionsData);	
 }
-
+ */
 
 // get the questions with all its properties from the database --> It doesn't work
 // based on https://www.w3schools.com/js/tryit.asp?filename=tryjson_ajax
@@ -84,7 +113,7 @@ getQuestions.send();
 
 //process the geoJSON (based on practical 6's appendix) 
 // --> But we need to do this without pasting the geoJSONString so if it changes in the data base it also changes here
-var geoJSONString= '[{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.13464,51.52427]},"properties":{"question":"Which is the architecture style of the Cruciform building?","choice1":"Victorian","choice2":"Tudor","choice3":"Queen Ann","choice4":"Eduardian","correct_choice":"choice 1"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.132126,51.522647]},"properties":{"question":"Which is the architecture style of the Waterstone bookstore building?","choice1":"Art Deco","choice2":"Revivalism","choice3":"Neo Gothic","choice4":"Eduardian","correct_choice":"choice 3"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.130991,51.523339]},"properties":{"question":"The Church of Christ the King, built in 1854?","choice1":"Neo Clasical","choice2":"Neo Gothic","choice3":"Beaux Arts","choice4":"Romanesque","correct_choice":"choice 2"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.05529,51.545476]},"properties":{"question":"The Empire Theatre, which was built on 1901?","choice1":"Tudor","choice2":"Neo Gothic","choice3":"Victorian Barroque","choice4":"Romanesque","correct_choice":"choice 3"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.055351,51.544755]},"properties":{"question":"Which is the architecture style of the Hackney Picturehouse?","choice1":"Romanesque","choice2":"Classical","choice3":"Bizantine","choice4":"Renaissance","correct_choice":"choice 2"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.05527,51.545173]},"properties":{"question":"The Kreative House building, built in 1910","choice1":"Queen Ann","choice2":"Art Deco","choice3":"Eclectic Eduardian","choice4":"Victorian","correct_choice":"choice 3"}}]}]';
+//var geoJSONString= '[{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.13464,51.52427]},"properties":{"question":"Which is the architecture style of the Cruciform building?","choice1":"Victorian","choice2":"Tudor","choice3":"Queen Ann","choice4":"Eduardian","correct_choice":"choice 1"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.132126,51.522647]},"properties":{"question":"Which is the architecture style of the Waterstone bookstore building?","choice1":"Art Deco","choice2":"Revivalism","choice3":"Neo Gothic","choice4":"Eduardian","correct_choice":"choice 3"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.130991,51.523339]},"properties":{"question":"The Church of Christ the King, built in 1854?","choice1":"Neo Clasical","choice2":"Neo Gothic","choice3":"Beaux Arts","choice4":"Romanesque","correct_choice":"choice 2"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.05529,51.545476]},"properties":{"question":"The Empire Theatre, which was built on 1901?","choice1":"Tudor","choice2":"Neo Gothic","choice3":"Victorian Barroque","choice4":"Romanesque","correct_choice":"choice 3"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.055351,51.544755]},"properties":{"question":"Which is the architecture style of the Hackney Picturehouse?","choice1":"Romanesque","choice2":"Classical","choice3":"Bizantine","choice4":"Renaissance","correct_choice":"choice 2"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.05527,51.545173]},"properties":{"question":"The Kreative House building, built in 1910","choice1":"Queen Ann","choice2":"Art Deco","choice3":"Eclectic Eduardian","choice4":"Victorian","correct_choice":"choice 3"}}]}]';
 function processGeoJSON() {
 	
 	// convert the string of downloaded data to JSON
@@ -168,12 +197,13 @@ function getDistanceFromPoint(position){
 		
 // get distance from a fixed list of points (returns the distance in kilometers) --> but actually we need to get it from the points in the database
 function getDistanceFromPoint(position){
-	var listCoords = [{lat:51.52445, lon:-0.13412},{lat:51.52422, lon: -0.13435},{lat:51.52479, lon:-0.13213},{lat:51.52379, lon:-0.13417}];
+	//var listCoords = [{lat:51.52445, lon:-0.13412},{lat:51.52422, lon: -0.13435},{lat:51.52479, lon:-0.13213},{lat:51.52379, lon:-0.13417}];
+	//var listCoords = geoJSONString
 	var alertRadius = 0.4;
     var minDistance = null;
 	var j = null;
-	for(var i = 0; i < listCoords.length; i++) {
-		var distance = calculateDistance(position.coords.latitude, position.coords.longitude, listCoords[i].lat,listCoords[i].lon, 'K');
+	for(var i = 0; i < listCoordinates.length; i++) {
+		var distance = calculateDistance(position.coords.latitude, position.coords.longitude, listCoordinates[i].lat,listCoordinates[i].lon, 'K');
 		document.getElementById('showDistance').innerHTML = "Distance: " + distance;
 		if (distance<= alertRadius&&(minDistance==null||distance<minDistance)){
 			minDistance=distance;
@@ -237,3 +267,5 @@ function calculateDistance(lat1, lon1, lat2, lon2, unit) {
 	
 // NOTE: For testing try http://developer.cege.ucl.ac.uk:31293/
 // It's also neccesary to run httpServer.js, server.js and phonegap serve (if not deployed as a stand-alone app)
+
+// To test in https go to https://developer.cege.ucl.ac.uk:31093/testApp/test.html running httpsServer inside Server
