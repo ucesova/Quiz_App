@@ -19,7 +19,7 @@ var POIlayer; // variable that will hold the layer itself – we need to do this
 
 function getPOI() {
 	client = new XMLHttpRequest();
-	client.open('GET','https://developer.cege.ucl.ac.uk:31093/getGeoJSON/questions/geom');
+	client.open('GET','http://developer.cege.ucl.ac.uk:31093/getGeoJSON/questions/geom');
 	client.onreadystatechange = POIResponse;  
 	client.send();
 }
