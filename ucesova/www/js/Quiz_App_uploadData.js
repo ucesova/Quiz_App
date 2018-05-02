@@ -33,8 +33,8 @@ var client;
 
 function processData(postString) {
    client = new XMLHttpRequest();
-   client.open('POST','https://developer.cege.ucl.ac.uk:31093/Quiz_App_uploadData',true);    // when using on https
-   //client.open('POST','http://developer.cege.ucl.ac.uk:30293/Quiz_App_uploadData',true);     // when using on http
+   //client.open('POST','https://developer.cege.ucl.ac.uk:31093/Quiz_App_uploadData',true);    // when using on https
+   client.open('POST','http://developer.cege.ucl.ac.uk:30293/Quiz_App_uploadData',true);     // when using on http
    client.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
    client.onreadystatechange = answerSaved;  
    client.send(postString);
