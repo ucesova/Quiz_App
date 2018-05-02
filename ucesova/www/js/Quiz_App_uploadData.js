@@ -4,7 +4,7 @@ function saveUserAnswer() {
 	var question = document.getElementById("nearQuestion").innerHTML; //The innerHTML property sets or returns the HTML content (inner HTML) of an element.
 	// var phoneid = device.uuid; //based on http://docs.phonegap.com/en/3.0.0/cordova_device_device.md.html#device.uuid --> error: the device is not defined
 	
-	alert(question); // it gives "undefined"
+	alert(question);
 
 	//create a name/value pair string as parameters for the URL to send values to the server
 	var postString = "question=" + question;
@@ -33,8 +33,8 @@ var client;
 
 function processData(postString) {
    client = new XMLHttpRequest();
-   //client.open('POST','https://developer.cege.ucl.ac.uk:31093/Quiz_App_uploadData',true);    // when using on https
-   client.open('POST','http://developer.cege.ucl.ac.uk:30293/Quiz_App_uploadData',true);     // when using on http
+   client.open('POST','https://developer.cege.ucl.ac.uk:31093/Quiz_App_uploadData',true);    // when using on https
+   //client.open('POST','http://developer.cege.ucl.ac.uk:30293/Quiz_App_uploadData',true);     // when using on http
    client.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
    client.onreadystatechange = answerSaved;  
    client.send(postString);
