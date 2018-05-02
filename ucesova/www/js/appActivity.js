@@ -12,14 +12,14 @@ id: 'mapbox.streets'
 // create a variable that will hold the XMLHttpRequest() - this must be done outside a function so that all the functions can use the same variable
 var client; 
 
-	
 // get the questions points from the database using an XMLHttpRequest
 
 var POIlayer; // variable that will hold the layer itself – we need to do this outside the function so that we can use it to remove the layer later on
 
 function getPOI() {
 	client = new XMLHttpRequest();
-	client.open('GET','http://developer.cege.ucl.ac.uk:30293/getGeoJSON/questions/geom');
+	client.open('GET','http://developer.cege.ucl.ac.uk:30293/getGeoJSON/questions/geom'); // when using http
+	//client.open('GET','https://developer.cege.ucl.ac.uk:31093/getGeoJSON/questions/geom'); //when using https
 	client.onreadystatechange = POIResponse;  
 	client.send();
 }
@@ -41,9 +41,10 @@ function POIResponse() {
 		geoJSONString = client.responseText;
 		loadPOIlayer(POIdata); // this code make POIdata available to be used by loadPOIlayer function
 	}
-// Get the geometries
 		
 	var responseJSON = JSON.parse(POIdata);
+	
+	// Get the geometries
 	listCoordinates = responseJSON[0]["features"].map(function(feature) {
 		var featureCoordinate = feature["geometry"]["coordinates"];
 		var featureLat = featureCoordinate[1];
