@@ -110,7 +110,7 @@ function loadPOIlayer(POIdata) {
 	mymap.fitBounds(POIlayer.getBounds());
 }
 
-//process the geoJSON (based on practical 6's appendix) 
+/* //process the geoJSON (based on practical 6's appendix) I'M NOT USING THIS!!!!!!
 function processGeoJSON() {
 	
 	// convert the string of downloaded data to JSON
@@ -133,7 +133,7 @@ function processGeoJSON() {
 		document.getElementById("loopresults").innerHTML = document.getElementById("loopresults").innerHTML + " <br> ";
 		}
 	}
-}
+} */
 	
 
 // code to track the user location
@@ -185,7 +185,7 @@ function getDistanceFromPoint(position){
 
 // code to show the correct answer (which previously is just hide)
 // based on https://www.w3schools.com/howto/howto_js_toggle_hide_show.asp
-function showResult() {
+function showCorrect() {
     var x = document.getElementById("correct");
     if (x.style.display === "none") {
         x.style.display = "block";
