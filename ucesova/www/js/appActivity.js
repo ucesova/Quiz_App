@@ -139,7 +139,7 @@ function getDistance() {
 		
 // get distance between the user's location and the questions in the database(returns the distance in kilometers)
 function getDistanceFromPoint(position){
-	var alertRadius = 0.4;
+	var alertRadius = 0.01; // 10 meters
 	var j = null;
 	for(var i = 0; i < listCoordinates.length; i++) {
 		var distance = calculateDistance(position.coords.latitude, position.coords.longitude, listCoordinates[i].lat,listCoordinates[i].lon, 'K');
