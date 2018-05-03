@@ -129,15 +129,39 @@ function showPosition(position) {
 	}
 	position_marker = L.circleMarker([position.coords.latitude, position.coords.longitude], {radius: 4}).addTo(mymap);
 	mymap.setView([position.coords.latitude, position.coords.longitude], 25);
+	// get distance between the user's location and the questions in the database(returns the distance in kilometers)
+	var alertRadius = 0.015; // 15 meters
+	var j = null;
+	for(var i = 0; i < listCoordinates.length; i++) {
+		var distance = calculateDistance(position.coords.latitude, position.coords.longitude, listCoordinates[i].lat,listCoordinates[i].lon, 'K');
+		document.getElementById('showDistance').innerHTML = "Distance: " + distance; // this is making problems because that div can't be removed from the html
+		if (distance<= alertRadius){
+			j=i;
+		}
+	}
+	// code to create a proximity alert
+	if (j!= null) {
+		alert("You are close to an interesting building! See a question about it below the map");
+		//Print the corresponding question and choices in the html
+		document.getElementById('nearQuestion').innerHTML = listQuestions[j].questionpoint;
+		document.getElementById('choice1').innerHTML = listChoice1[j].questionChoice1;
+		document.getElementById('choice2').innerHTML = listChoice2[j].questionChoice2;
+		document.getElementById('choice3').innerHTML = listChoice3[j].questionChoice3;
+		document.getElementById('choice4').innerHTML = listChoice4[j].questionChoice4;
+		document.getElementById('correct').innerHTML = listChoice4[j].questionCorrectChoice; // this one is not working
+		
+	} 
+	//else if (j== null) { 
+		//alert("you are not yet close enough to an interesting building. Click on 'Show buildings of interest' to see where to go!");
 }
 
-function getDistance() {
+/* function getDistance() {
 	alert('getting distance');
 	// getDistancefromPoint is the function called once the distance has been found
 	navigator.geolocation.getCurrentPosition(getDistanceFromPoint);
-}
+} */
 		
-// get distance between the user's location and the questions in the database(returns the distance in kilometers)
+/* // get distance between the user's location and the questions in the database(returns the distance in kilometers)
 function getDistanceFromPoint(position){
 	var alertRadius = 0.01; // 10 meters
 	var j = null;
@@ -162,7 +186,7 @@ function getDistanceFromPoint(position){
 	} else if (j== null) { 
 		alert("you are not yet close enough to an interesting building. Click on 'Show buildings of interest' to see where to go!");
 	}		
-}
+} */
 
 // code to show the correct answer (which previously is just hide)
 // based on https://www.w3schools.com/howto/howto_js_toggle_hide_show.asp
