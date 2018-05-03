@@ -123,7 +123,7 @@ function trackLocation() {
 		console.log(userPositions);
 		for(var i = 0; i < userPositions.length; i++) {
 			if (userPositions[1] !== undefined && userPositions[i] !== userPositions[i+1]){
-				trackLocation();
+				return trackLocation();
 			}
 		} 
 	}else {
