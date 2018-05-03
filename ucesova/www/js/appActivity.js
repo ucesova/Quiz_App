@@ -121,11 +121,11 @@ function trackLocation() {
 		navigator.geolocation.getCurrentPosition(getDistanceFromPoint);
 		userPositions.push({lat: position.coords.latitude, lng: position.coords.longitude}); // Save the current position to the array. based on https://stackoverflow.com/questions/47752531/saving-user-input-location-from-current-location-google-maps-api and https://stackoverflow.com/questions/15742442/declaring-array-of-objects
 		console.log(userPositions);
-		for(var i = 0; i < userPositions.length; i++) {
+		/* for(var i = 0; i < userPositions.length; i++) {
 			if (userPositions[1] !== undefined && userPositions[i] !== userPositions[i+1]){
 				return trackLocation();
 			}
-		} 
+		}  */
 	}else {
 		document.getElementById('showLocation').innerHTML = "Geolocation is not supported by this browser.";
 	}
