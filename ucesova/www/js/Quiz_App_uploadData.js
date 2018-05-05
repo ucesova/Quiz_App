@@ -4,7 +4,7 @@ function saveUserAnswer() {
 	var question = document.getElementById("nearQuestion").innerHTML; //The innerHTML property sets or returns the HTML content (inner HTML) of an element.
 	// var phoneid = device.uuid; //based on http://docs.phonegap.com/en/3.0.0/cordova_device_device.md.html#device.uuid --> error: the device is not defined
 	
-	alert(question); // it gives "undefined"
+	//alert(question);
 
 	//create a name/value pair string as parameters for the URL to send values to the server
 	var postString = "question=" + question;
@@ -25,7 +25,7 @@ function saveUserAnswer() {
 
 	processData(postString);
 	
-	alert(postString);
+	//alert(postString);
 }
 
 //Adding an AJAX call and response method

@@ -111,32 +111,6 @@ function loadPOIlayer(POIdata) {
 	mymap.fitBounds(POIlayer.getBounds());
 }
 
-/* //process the geoJSON (based on practical 6's appendix) I'M NOT USING THIS!!!!!!
-function processGeoJSON() {
-	
-	// convert the string of downloaded data to JSON
-	var geoJSON = JSON.parse(geoJSONString);
-	alert(geoJSON[0].type);
-	for(var i = 0; i < geoJSON[0].features.length; i++) {
-		var feature = geoJSON[0].features[i];
-		for ( component in feature){
-			if (component == "geometry") { // this is the geometry
-				for (geometry in feature[component]){attribute = "geometry " + feature[component][geometry];
-					document.getElementById("loopresults").innerHTML = document.getElementById("loopresults").innerHTML + " || " +attribute;
-				}
-			}
-			if (component == "properties") { // these are the attributes
-				for (property in feature[component]) {
-					attribute = "property " + feature[component][property];
-					document.getElementById("loopresults").innerHTML = document.getElementById("loopresults").innerHTML + " || " +attribute;
-				}
-			}
-		document.getElementById("loopresults").innerHTML = document.getElementById("loopresults").innerHTML + " <br> ";
-		}
-	}
-} */
-	
-
 // code to track the user location
 var position_marker
 			
@@ -156,14 +130,20 @@ function showPosition(position) {
 	position_marker = L.circleMarker([position.coords.latitude, position.coords.longitude], {radius: 4}).addTo(mymap);
 	mymap.setView([position.coords.latitude, position.coords.longitude], 25);
 }
+
+/* function getDistance() {
+	alert('getting distance');
+	// getDistancefromPoint is the function called once the distance has been found
+	navigator.geolocation.getCurrentPosition(getDistanceFromPoint);
+} */
 		
 // get distance between the user's location and the questions in the database(returns the distance in kilometers)
 function getDistanceFromPoint(position){
-	var alertRadius = 0.4;
+	var alertRadius = 0.01; // 10 meters
 	var j = null;
 	for(var i = 0; i < listCoordinates.length; i++) {
 		var distance = calculateDistance(position.coords.latitude, position.coords.longitude, listCoordinates[i].lat,listCoordinates[i].lon, 'K');
-		document.getElementById('showDistance').innerHTML = "Distance: " + distance;
+		document.getElementById('showDistance').innerHTML = "Distance: " + distance; // this is making problems because that div can't be removed from the html
 		if (distance<= alertRadius){
 			j=i;
 		}
@@ -177,7 +157,7 @@ function getDistanceFromPoint(position){
 		document.getElementById('choice2').innerHTML = listChoice2[j].questionChoice2;
 		document.getElementById('choice3').innerHTML = listChoice3[j].questionChoice3;
 		document.getElementById('choice4').innerHTML = listChoice4[j].questionChoice4;
-		document.getElementById('correct').innerHTML = listChoice4[j].questionCorrectChoice;
+		document.getElementById('correct').innerHTML = listChoice4[j].questionCorrectChoice; // this one is not working
 		
 	} else if (j== null) { 
 		alert("you are not yet close enough to an interesting building. Click on 'Show buildings of interest' to see where to go!");
@@ -211,6 +191,11 @@ function calculateDistance(lat1, lon1, lat2, lon2, unit) {
 	if (unit=="K") { dist = dist * 1.609344 ;}  // convert miles to km
 	if (unit=="N") { dist = dist * 0.8684 ;}    // convert miles to nautical miles
 	return dist;
+}
+
+function startGame() {
+    getPOI();
+    trackLocation();
 }
 
 	//////////////

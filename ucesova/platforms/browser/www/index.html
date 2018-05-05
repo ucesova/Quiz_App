@@ -121,8 +121,9 @@
           <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>Home</a>
           <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">inbox</i>Inbox</a>
           <a class="mdl-navigation__link" href="" onclick='trackLocation();return false;'><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">delete</i>Track your Location</a>
-          <a class="mdl-navigation__link" href="" onclick='getPOI();return false;'><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">report</i>Show buildings of interest</a>
-          <a class="mdl-navigation__link" href="" onclick='callDivChange();return false;'><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i>Change Div Content</a>
+          <!--<a class="mdl-navigation__link" href="" onclick='getPOI();return false; trackLocation();return false;'><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">report</i>Start!</a> -->
+          <a class="mdl-navigation__link" href="" onclick='getPOI();return false; '><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">report</i>Show buildings of interest</a>
+		  <a class="mdl-navigation__link" href="" onclick='callDivChange();return false;'><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i>Change Div Content</a>
           <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i>Flag</a>
           <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">local_offer</i>Promos</a>
           <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">shopping_cart</i>Purchases</a>
@@ -151,9 +152,10 @@
 		<input type="radio" name="archstyle" id="choice3selected"><div id="choice3">Choice 3 will appear here...</div></br>
 		<input type="radio" name="archstyle" id="choice4selected"><div id="choice4">Choice 4 will appear here...</div></br>
 		<!--<p>Click here to send your answer</p>-->
-			<button id="saveAnswer" onclick="saveUserAnswer()">Send your answer</button>
-			<br />
-		<button type="submit" onclick="showCorrect()"> Check the correct answer</button>
+		<button id="saveAnswer" onclick="saveUserAnswer()">Send your answer</button>
+		<br />
+		<!--<button type="submit" onclick="showCorrect()"> Check the correct answer</button>-->
+		<button id = 'showCorr' onclick="showCorrect()"> Check the correct answer</button>
 		<div id="correct" style="display:none;" >The correct answer will appear here</div>
 		</div>
 		</div>
