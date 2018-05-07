@@ -1,30 +1,34 @@
+/* SCRIPT to load the map and the basemap tiles. It also defines the functions to track the user's location, 
+process the geoJSON data from the database, calculate the distance between the user and the Pois and promt
+a proximity alert and show the question of the close POI. */
+	
 
 // load a map
-var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+var mymap = L.map('mapid').setView([51.505, -0.09], 13); //the view is centered around UCL main campus
 		
-// load the tiles
+// load the tiles from mapbox
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw',{
 maxZoom:18,
 attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' + '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' + 'Imagery © <a href="http://mapbox.com">Mapbox</a>',
 id: 'mapbox.streets'
 }).addTo(mymap);
 		
-// create a variable that will hold the XMLHttpRequest() - this must be done outside a function so that all the functions can use the same variable
-var client; 
-
-// get the questions points from the database using an XMLHttpRequest
-
+var client; // variable that will hold the XMLHttpRequest() - It is a global variable so all the functions can use it
 var POIlayer; // variable that will hold the layer itself – we need to do this outside the function so that we can use it to remove the layer later on
 
+// get the questions points from the database using an XMLHttpRequest
 function getPOI() {
 	client = new XMLHttpRequest();
-	client.open('GET','http://developer.cege.ucl.ac.uk:30293/getGeoJSON/questions/geom'); // when using http
-	//client.open('GET','https://developer.cege.ucl.ac.uk:31093/getGeoJSON/questions/geom'); //when using https
+	client.open('GET','http://developer.cege.ucl.ac.uk:30293/getQuestions'); // when using http
+	//client.open('GET','https://developer.cege.ucl.ac.uk:31093/getQuestions'); //when using https
 	client.onreadystatechange = POIResponse;  
 	client.send();
 }
+
 // create the code to wait for the response from the data server, and process the response once it is received
-var geoJSONString; // this s needed as a global variable
+
+// first, create the variables that will hold the coordinates, questions choices and correct choises
+// These are global variables so then can be used to calculte the distance between the user and the questions' points and to print them in the front end page
 var listCoordinates;
 var listQuestions;
 var listChoice1;
@@ -38,7 +42,6 @@ function POIResponse() {
 	if (client.readyState == 4) {
 		// once the data is ready, process the data
 		var POIdata = client.responseText;
-		geoJSONString = client.responseText;
 		loadPOIlayer(POIdata); // this code make POIdata available to be used by loadPOIlayer function
 	}
 		
@@ -48,49 +51,51 @@ function POIResponse() {
 	listCoordinates = responseJSON[0]["features"].map(function(feature) {
 		var featureCoordinate = feature["geometry"]["coordinates"];
 		var featureLat = featureCoordinate[1];
-		var featureLng = featureCoordinate[0]
+		var featureLng = featureCoordinate[0] 
 		return {
 			lat: featureLat,
 			lon: featureLng
 		}
 	});
 		
-	// Get the properties (questions, choices or correct choice)
-	listQuestions = responseJSON[0]["features"].map(function(feature) {
+	// Get the properties (questions, choices or correct choice) using the javascript map() method
+	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+	// In this case the map() method creates a new array only with the questions
+	listQuestions = responseJSON[0]["features"].map(function(feature) { 
 		var featureQuestion = feature["properties"]["question"];
 		return {
-			questionpoint: featureQuestion,
+			questionpoint: featureQuestion, 
 		}
 	});	
-	
+	// In this case the map() method creates a new array only with the choice1
 	listChoice1 = responseJSON[0]["features"].map(function(feature) {
 		var featureChoice1 = feature["properties"]["choice1"];
 		return {
 			questionChoice1: featureChoice1,
 		}
 	});	
-	
+	// In this case the map() method creates a new array only with the choice2
 	listChoice2 = responseJSON[0]["features"].map(function(feature) {
 		var featureChoice2 = feature["properties"]["choice2"];
 		return {
 			questionChoice2: featureChoice2,
 		}
 	});	
-	
+	// In this case the map() method creates a new array only with the choice3
 	listChoice3 = responseJSON[0]["features"].map(function(feature) {
 		var featureChoice3 = feature["properties"]["choice3"];
 		return {
 			questionChoice3: featureChoice3,
 		}
 	});	
-	
+	// In this case the map() method creates a new array only with the choice4
 	listChoice4 = responseJSON[0]["features"].map(function(feature) {
 		var featureChoice4 = feature["properties"]["choice4"];
 		return {
 			questionChoice4: featureChoice4,
 		}
 	});
-	
+	// In this case the map() method creates a new array only with the correct choice
 	listCorrectChoice = responseJSON[0]["features"].map(function(feature) {
 		var featureCorrectChoice = feature["properties"]["correct_choice"];
 		return {
@@ -112,17 +117,19 @@ function loadPOIlayer(POIdata) {
 }
 
 // code to track the user location
-var position_marker
-			
+
+var position_marker //variable that will hold the marker itself – It is globall so we can use it to remove the previous markers when showing the current one
+	
 function trackLocation() {
 	if (navigator.geolocation) {
-		navigator.geolocation.watchPosition(showPosition);
-		navigator.geolocation.getCurrentPosition(getDistanceFromPoint);
+		navigator.geolocation.watchPosition(showPosition); // this calls the showPosition function
+		navigator.geolocation.getCurrentPosition(getDistanceFromPoint); // this calls the getDistanceFromPoint function
 		} else {
 			document.getElementById('showLocation').innerHTML = "Geolocation is not supported by this browser.";
 		}
 }
-		
+
+// function to show a marker at the current location removing previous markers if there is any		
 function showPosition(position) {
 	if (position_marker){
 		mymap.removeLayer(position_marker);
@@ -131,12 +138,6 @@ function showPosition(position) {
 	mymap.setView([position.coords.latitude, position.coords.longitude], 25);
 }
 
-/* function getDistance() {
-	alert('getting distance');
-	// getDistancefromPoint is the function called once the distance has been found
-	navigator.geolocation.getCurrentPosition(getDistanceFromPoint);
-} */
-		
 // get distance between the user's location and the questions in the database(returns the distance in kilometers)
 function getDistanceFromPoint(position){
 	var alertRadius = 0.01; // 10 meters
@@ -148,7 +149,7 @@ function getDistanceFromPoint(position){
 			j=i;
 		}
 	}
-	// code to create a proximity alert
+	// code to create a proximity alert and show the question, choices and correct answer to the user
 	if (j!= null) {
 		alert("You are close to an interesting building! See a question about it below the map");
 		//Print the corresponding question and choices in the html
@@ -157,7 +158,7 @@ function getDistanceFromPoint(position){
 		document.getElementById('choice2').innerHTML = listChoice2[j].questionChoice2;
 		document.getElementById('choice3').innerHTML = listChoice3[j].questionChoice3;
 		document.getElementById('choice4').innerHTML = listChoice4[j].questionChoice4;
-		document.getElementById('correct').innerHTML = listChoice4[j].questionCorrectChoice; // this one is not working
+		document.getElementById('correct').innerHTML = listCorrectChoice[j].questionCorrectChoice;
 		
 	} else if (j== null) { 
 		alert("you are not yet close enough to an interesting building. Click on 'Show buildings of interest' to see where to go!");
@@ -175,7 +176,7 @@ function showCorrect() {
     }
 }
 
-// code adapted from https://www.htmlgoodies.com/beyond/javascript/calculate-the-distance-between-two-points-inyour-web-apps.html
+// code adapted from https://www.htmlgoodies.com/beyond/javascript/calculate-the-distance-between-two-points-in-your-web-apps.html
 function calculateDistance(lat1, lon1, lat2, lon2, unit) {
 	var radlat1 = Math.PI * lat1/180;
 	var radlat2 = Math.PI * lat2/180;
@@ -193,38 +194,38 @@ function calculateDistance(lat1, lon1, lat2, lon2, unit) {
 	return dist;
 }
 
+// Function to call getPOI and trackLocation at the same time
 function startGame() {
     getPOI();
     trackLocation();
 }
 
-	//////////////
-	
-	var xhr; // define the global variable to process the AJAX request
-	function callDivChange() {
-		xhr = new XMLHttpRequest();
-		var filename = document.getElementById("filename").value;
-		xhr.open("GET", filename, true);
-		xhr.onreadystatechange = processDivChange;
-		try {
-			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-		}
-		catch (e) {
-			// this only works in internet explorer
-		}
-		xhr.send();
+var xhr; // define the global variable to process the AJAX request
+function callDivChange() {
+	xhr = new XMLHttpRequest();
+	var filename = document.getElementById("filename").value;
+	xhr.open("GET", filename, true);
+	xhr.onreadystatechange = processDivChange;
+	try {
+		xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	}
-
-	function processDivChange() {
-		if (xhr.readyState < 4) // while waiting response from server
-			document.getElementById('ajaxtest').innerHTML = "Loading...";
-		else if (xhr.readyState === 4) { // 4 = Response from server has been completely loaded.
-			if (xhr.status == 200 && xhr.status < 300)// http status between 200 to 299 are all successful
-				document.getElementById('ajaxtest').innerHTML = xhr.responseText;
-		}
+	catch (e) {
+		// this only works in internet explorer
 	}
-	
-// NOTE: For testing try http://developer.cege.ucl.ac.uk:31293/
-// It's also neccesary to run httpServer.js, server.js and phonegap serve (if not deployed as a stand-alone app)
+	xhr.send();
+}
 
-// To test in https go to https://developer.cege.ucl.ac.uk:31093/testApp/test.html running httpsServer inside Server
+function processDivChange() {
+	if (xhr.readyState < 4) // while waiting response from server
+		document.getElementById('ajaxtest').innerHTML = "Loading...";
+	else if (xhr.readyState === 4) { // 4 = Response from server has been completely loaded.
+		if (xhr.status == 200 && xhr.status < 300)// http status between 200 to 299 are all successful
+			document.getElementById('ajaxtest').innerHTML = xhr.responseText;
+	}
+}
+	
+// NOTE: 
+// For testing try http://developer.cege.ucl.ac.uk:31293/
+// It's also neccesary to run httpServer.js and phonegap serve (the latter only if not deployed as a stand-alone app)
+
+// To test in https go to https://developer.cege.ucl.ac.uk:31093/testApp/test.html running httpsServer

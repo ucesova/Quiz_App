@@ -81,7 +81,7 @@
     <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
       <header class="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
         <div class="mdl-layout__header-row">
-          <span class="mdl-layout-title">ArchiQuiz</span>
+          <span class="mdl-layout-title">ArchiQuiz - User Guide</span>
           <div class="mdl-layout-spacer"></div>
           <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
             <label class="mdl-button mdl-js-button mdl-button--icon" for="search">
@@ -121,7 +121,7 @@
         </header>
         <nav class="demo-navigation mdl-navigation mdl-color--blue-grey-800">
           <!-- <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>Home</a> -->
-          <a class="mdl-navigation__link" href="index.html" onclick='startGame();return false;'><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">start</i>Start!</a>
+          <a class="mdl-navigation__link" href="index.html" ><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">start</i>Start!</a>
 		  <!-- <a class="mdl-navigation__link" href="" onclick='trackLocation();return false;'><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">delete</i>Track your Location</a> -->
           <a class="mdl-navigation__link" href="" onclick='getPOI();return false;'><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">report</i>Show buildings of interest</a>
 		  <!-- <a class="mdl-navigation__link" href="" onclick='callDivChange();return false;'><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i>Change Div Content</a> -->
@@ -136,42 +136,19 @@
       <main class="mdl-layout__content mdl-color--grey-100">
         <div class="mdl-grid demo-content">
           <div class="demo-charts mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
-		  <div>
-		  <p class="instructions">Welcome to ArchiQuiz! the location-based quiz to challenge your architecture knowledge. 
-		  <p class="instructions">Follow the instructions:</p>
-		  <p class="instructions">1- Go to the menu and click Start!. This will start tracking your location.</p>
-		  <p  class="instructions">2- Wait to see if you are close to a building of interest to get a question about it.</p>
-		  </div>
-		  <div id="mapid" style="width:600px; height:400px;"></div>
-		  <div>
-				<p style="margin-top:10px;">Which is the architecture style of...:</p>
-				<label for="nearQuestion"></label><div id="nearQuestion" style="font-weight:bold;">If you are close to a building of interest, it will appear here...</div>
-				<input type="radio" name="archstyle" id="choice1selected"><div class="inline" id="choice1">Choice 1 will appear here...</div></br>
-				<input type="radio" name="archstyle" id="choice2selected"><div class="inline" id="choice2">Choice 2 will appear here...</div></br>
-				<input type="radio" name="archstyle" id="choice3selected"><div class="inline" id="choice3">Choice 3 will appear here...</div></br>
-				<input type="radio" name="archstyle" id="choice4selected"><div class="inline" id="choice4">Choice 4 will appear here...</div></br>
-				<!--<p>Click here to send your answer</p>-->
-				<button id="saveAnswer" onclick="saveUserAnswer()">Send your answer</button>
-				<br />
-				<!--<button type="submit" onclick="showCorrect()"> Check the correct answer</button>-->
-				<button id = 'showCorr' onclick="showCorrect()" style="margin-top:10px;"> Check the correct answer</button>
-				<br />
-				<div id="correct" style="display:none; margin-bottom:10px;" >The correct answer will appear here</div>
-				<br />
-				<button id='getDistance' onclick='getDistance()'>See below the distance between you and the question's building (in km)</button>
-				<div id='showDistance'>distance</div>
+			<div>
+			<p class="instructions"><strong>Welcome to the ArchiQuiz! The location based quiz to challenge your architecture knowledge. </strong></p>
+			<p class="instructions">Follow the instructions:</p>
+			<ol>
+				<li>Go to the menu, click “start”, this will start tracking your location while is going to show you on the map where are questions to be answered. </li>
+				<li>Wait to see if you are close to a building of interest to get a question about it.</li>
+				<li>If you are close, a question will appear bellow the map</li>
+				<li>Answer the question and the click on “send your answer”</li>
+				<li>You then can click on “check the correct answer” and see if you were right.</li>
+			</ol>
 			</div>
-		  <!-- <div><p>Type the html file name here - note you need to include .html</p><input type="text" name="filename" id="filename" size=50>
-		  <b>This code will display your current location</b> -->
-			
-			<br />
-			
-		  <div id="ajaxtest" style="width: 1600px; height: 20px;"></div></div>
 		  </div>
         </div>
-	
-        
-		</div>
 		
 		
 		</main>
