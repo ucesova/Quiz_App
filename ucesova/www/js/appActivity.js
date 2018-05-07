@@ -19,8 +19,8 @@ var POIlayer; // variable that will hold the layer itself – we need to do this
 // get the questions points from the database using an XMLHttpRequest
 function getPOI() {
 	client = new XMLHttpRequest();
-	//client.open('GET','http://developer.cege.ucl.ac.uk:30293/getQuestions'); // when using http
-	client.open('GET','https://developer.cege.ucl.ac.uk:31093/getQuestions'); //when using https
+	client.open('GET','http://developer.cege.ucl.ac.uk:30293/getQuestions'); // when using http
+	//client.open('GET','https://developer.cege.ucl.ac.uk:31093/getQuestions'); //when using https
 	client.onreadystatechange = POIResponse;  
 	client.send();
 }
