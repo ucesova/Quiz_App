@@ -205,10 +205,13 @@
           </g>
         </defs>
       </svg>
-    <script src="https://code.getmdl.io/1.3.0/material.min.js">
-	</script>
+    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+	
+	<!--the following script allows to save the users' answers to the database -->
 	<script src="./js/Quiz_App_uploadData.js"> </script>	
-		<!--the following script will load the map and set the default view and zoom, as well as loading the basemap tiles -->
+	<!--the following script will load the map and the basemap tiles. It also defines the functions to track the user's location, 
+	process the geoJSON data from the database, calculate the distance between the user and the Pois and promt a proximity alert and show the question of the close POI.
+	-->
 	<script src="js/appActivity.js"></script>
 
   </body>
